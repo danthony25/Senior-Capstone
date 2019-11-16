@@ -6,10 +6,6 @@ Final Project
 Style page for all pages for the brewery database
 */
 
-* {
-	box-sizing: border-box;
-}
-
 body {
 	background-color: white;
 	background-image: url(gradientblue.jpg);
@@ -23,6 +19,20 @@ body {
 	margin-left: auto;
 	background-color: white;
 	min-height: 500px;
+}
+
+#home, #banner a, #back {
+	display: inline;
+	padding: 5px;
+	font-size: 24px;
+}
+
+#banner {
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #ADD8E6;
+	padding: 10px;
+	padding-left: 486.2375px;
 }
 
 input {
@@ -56,17 +66,11 @@ h3 {
 	font-size: 1.5em;
 }
 
-nav {
-	padding: 5px;
-	font-size: 22px;
-	text-align: center;
-	background-color: #E0FFFF;
-}
 
-nav a {
+#banner a {
 	text-decoration: none;
 }
 
-header, nav, main {
+header, main {
 	display: block;
 }
