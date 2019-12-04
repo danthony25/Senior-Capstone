@@ -13,19 +13,22 @@ Capstone Charity Webpage HTML Homepage
     <body>
         <div id="wrapper">
             <header>
-                <h1>Non-Profit Charity Webpage</h1>
+                <h1>Your Personal Charity Finder</h1>
             </header>
             <div id="banner">
                     <p id="home">Home</p>
-                    <a href="about.html">About</a>
+                    <p id="about">About</p>
                     <p id="back">Back</p>
             </div>
             <main>
                 <div id="search">
                     <p>Charity Name:<input id="name" type="text" /></p>
-                    <p>Charity Type:<input id="type" type="text" /></p>
-                    <p>State:<input id="state" type="text" /></p>
-                    <p>City:<input id="city" type="text" /></p>
+                    <p>Charity Category:<select id="type">
+                        <option>Choose a Category</option>
+                    </select></p>
+                    <p>State:<select id="state">
+                        <option>Choose a State</option>
+                    </select></p>
                     <button id="submit">Search</button>
                 </div>
             </main>
