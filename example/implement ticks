@@ -1,0 +1,2 @@
+ ax = plt.gca()
+ ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values))
