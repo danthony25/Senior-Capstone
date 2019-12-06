@@ -1,3 +1,5 @@
+
+
 (function () {
     "use strict";
 
@@ -8,8 +10,9 @@
     window.onload = function() {
         document.getElementById("home").addEventListener("click", reload);
         document.getElementById("about").addEventListener("click", change);
+        document.getElementById("back").addEventListener("click", clickBack);
         get();
-        document.getElementById("submit").onclick = requestCharities;
+        document.getElementById("submit").onclick = getData;
         
         // setInterval(function(){
         //     document.getElementById('comments').innerHTML = '';
@@ -18,6 +21,14 @@
 
     };
 
+    
+    function clickBack() {
+        if ((name != "") || (user_cat != "") || (user_state != "")){
+            requestCharities(name, user_cat, user_state);
+        }
+    }
+       
+    
     /**
     If home is clicked the page reloads
     **/
@@ -139,12 +150,21 @@
                 
     }
 
-    function requestCharities() {
-        let name_lst = [];
-        let store = 0;
+    function getData() {
         name = document.getElementById("name").value;
         user_cat = document.getElementById("type").value;
-        user_state = document.getElementById("state").value;
+        user_state = document.getElementById("state").value; 
+
+        requestCharities(name, user_cat, user_state);
+    }
+
+    function requestCharities(name, user_cat, user_state) {
+        let name_lst = [];
+        let store = 0;
+        /**name = document.getElementById("name").value;
+        user_cat = document.getElementById("type").value;
+        user_state = document.getElementById("state").value;**/
+      
 
         let url = 'http://localhost:3000';
         fetch(url)
@@ -161,25 +181,26 @@
                 body.innerHTML = "";
 
                 let h4 = document.createElement("h4");
-                if(name && (name_lst.includes(name))) {
-                    h4.innerHTML = "Results for " + name + ":";
+                if(name && (name_lst.includes(name)) && (user_cat == "Choose a Category")
+                    && (user_state == "Choose a State")) {
+                    h4.innerHTML = "Results for Charity " + name + ":";
                 }
 
                 else if((user_cat && user_state) && (user_cat != "Choose a Category") &&
-                 (user_state != "Choose a State")) {
+                 (user_state != "Choose a State") && (!name)) {
                     h4.innerHTML = "Results for " + user_cat + " in " + user_state + ":";
                 }
 
-                else if(user_cat && (user_cat != "Choose a Category")) {
-                    h4.innerHTML = "Results for " + user_cat + ":";
+                else if(user_cat && (user_cat != "Choose a Category") && (!name)) {
+                    h4.innerHTML = "Results for Category " + user_cat + ":";
                 }
 
-                else if(user_state && (user_state != "Choose a State")) {
-                    h4.innerHTML = "Results for " + user_state + ":";
+                else if(user_state && (user_state != "Choose a State") && (!name)) {
+                    h4.innerHTML = "Results for State " + user_state + ":";
                 }
 
                 else {
-                    h4.innerHTML = "No Results Try Again";
+                    h4.innerHTML = "Results:";
                 }
 
                 h4.style.fontsize = "22px";
@@ -206,7 +227,7 @@
                 for(let i=0; i < json.length; i++) {
                     let tr = document.createElement("tr");
                     let th1 = document.createElement("th");
-                    if(name && (json[i]["Charity Name"] == name)) {
+                    if(name && (json[i]["Charity Name"] == name) ) {
                         store = i;
                         tr.setAttribute("id", store);
                         tr.addEventListener("click", charClick); 
@@ -224,19 +245,78 @@
                         tr.appendChild(th3); 
                         table.appendChild(tr);
 
-                        if (i % 2 != 0) {
-                            tr.style.backgroundColor = "#ADD8E6";
-                        }
-                        else {
-                            tr.style.backgroundColor = "#4682B4";
-                        }
+                        tr.style.backgroundColor = "#ADD8E6";
 
                     }
 
-                    else if(((user_cat && user_state) && (user_cat != "Choose a Category") &&
-                    (user_state != "Choose a State"))) {
+                    else if(((user_cat && user_state) && (user_cat == json[i]["Category"]) &&
+                    (user_state != "Choose a State") && (user_state == json[i]["State"]))) {
+                        tr.setAttribute("id", i);
+                        tr.addEventListener("click", charClick); 
+                        th1.innerHTML = i;   
+                        tr.appendChild(th1);
+
+                        let th2 = document.createElement("th");
+                        th2.innerHTML = json[i]["Charity Name"]; 
+                        tr.appendChild(th2);
+
+                        let th3 = document.createElement("th");
+                        let brew = json[i]["Category"];
+                        let upper = brew.charAt(0).toUpperCase() + brew.slice(1);
+                        th3.innerHTML = upper;
+                        tr.appendChild(th3); 
+                        table.appendChild(tr);
+
+                        
+                        tr.style.backgroundColor = "#ADD8E6";
                         
                     }
+
+                    else if(user_cat && (user_cat != "Choose a Category") &&
+                        (user_state == "Choose a State") && (user_cat == json[i]["Category"])) {
+                        tr.setAttribute("id", i);
+                        tr.addEventListener("click", charClick); 
+                        th1.innerHTML = i;   
+                        tr.appendChild(th1);
+
+                        let th2 = document.createElement("th");
+                        th2.innerHTML = json[i]["Charity Name"]; 
+                        tr.appendChild(th2);
+
+                        let th3 = document.createElement("th");
+                        let brew = json[i]["Category"];
+                        let upper = brew.charAt(0).toUpperCase() + brew.slice(1);
+                        th3.innerHTML = upper;
+                        tr.appendChild(th3); 
+                        table.appendChild(tr);
+
+                        tr.style.backgroundColor = "#ADD8E6";
+                    }
+
+                    else if(user_state && (user_state != "Choose a State") &&
+                        (user_cat == "Choose a Category") && (user_state == json[i]["State"])) {
+                        tr.setAttribute("id", i);
+                        tr.addEventListener("click", charClick); 
+                        th1.innerHTML = i;   
+                        tr.appendChild(th1);
+
+                        let th2 = document.createElement("th");
+                        th2.innerHTML = json[i]["Charity Name"]; 
+                        tr.appendChild(th2);
+
+                        let th3 = document.createElement("th");
+                        let brew = json[i]["Category"];
+                        let upper = brew.charAt(0).toUpperCase() + brew.slice(1);
+                        th3.innerHTML = upper;
+                        tr.appendChild(th3); 
+                        table.appendChild(tr);
+
+                        tr.style.backgroundColor = "#ADD8E6";
+                    }
+
+
+
+
                 }
                 body.appendChild(table);
             })
@@ -248,7 +328,7 @@
     }
 
     function charClick() {
-        let value = this.id; // This is what gets the charity index
+        let value = this.id;
         let url = 'http://localhost:3000';
         let body = document.getElementById("search"); 
         body.style.margin = "20px";
@@ -263,6 +343,12 @@
                 h3.style.textDecoration = "underline";
                 h3.innerHTML = json[value]["Charity Name"];
                 body.appendChild(h3);
+
+                let id = document.createElement("p");
+                id.setAttribute("id", "charID");
+                id.innerHTML = value;
+                body.appendChild(id);
+                id.hidden = true;
 
                 let h4 = document.createElement("h4");
                 h4.style.fontsize = "1.2em"
@@ -284,6 +370,24 @@
                 json[value]["State"] + " " + json[value]["Postal Code"];
                 body.appendChild(loc);
 
+                let rate = document.createElement("p");
+                rate.innerHTML = "Rating: " + json[value]["Rating"] + " / 4";
+                body.appendChild(rate);
+
+                let avg = document.createElement("p");
+                let amount = 0;
+                let len = 0;
+                for(let i = 0; i < json.length; i++){
+                    if(json[i]["Category"] == json[value]["Category"]){
+                        amount += parseInt(json[i]["Rating"]);
+                        len += 1;
+                avg.innerHTML = "Average Rating for Category " + json[value]["Category"]
+                + ": " + (amount / len).toFixed(2);
+                body.appendChild(avg);
+
+                    }
+                }
+
                 let graph = document.createElement('canvas');
 
                 graph.setAttribute("id", "chart");
@@ -294,9 +398,129 @@
                 myChart(json, value);
 
 
-     })
+                let intro = document.createElement("h5");
+                intro.innerHTML = "Leave a Comment: ";
+                intro.style.margin = "5px";
+                intro.style.fontSize = "25px";
+                intro.style.textDecoration = "underline";
+                intro.style.marginLeft = "0px";
+                intro.style.marginTop = "10px";
+                body.appendChild(intro);
+
+                let comName = document.createElement("input");
+                comName.setAttribute("id", "comName");
+                let comment = document.createElement("textarea");
+                comment.setAttribute("id", "comment");
+                body.appendChild(comName);
+                body.appendChild(comment);
+                let yourName = document.getElementById("comName");
+                yourName.placeholder = "Your Name Here";
+                yourName.style.marginBottom = "2px";
+                yourName.style.marginLeft = "0px";
+                yourName.style.width = "150px";
+                let yourComment = document.getElementById("comment");
+                yourComment.placeholder = "Your Comment Here";
+                yourComment.style.marginBottom = "2px";
+                yourComment.style.marginLeft = "0px";
+                yourComment.style.width = "300px";
+                yourComment.style.height = "150px";
+                yourComment.style.position = "abosolute";
+
+                let sub = document.createElement("button");
+                sub.setAttribute("id" , "submitComment");
+                sub.addEventListener("click", submitComment);
+                body.appendChild(sub);
+                let subComment = document.getElementById("submitComment");
+                subComment.innerHTML = "Submit";
+                subComment.style.width = "100px";
+                subComment.style.marginLeft = "205px";
+                subComment.style.marginBottom = "10px";
+
+                let commentsArea = document.createElement("div");
+                commentsArea.setAttribute("id", "commentsArea");
+                body.appendChild(commentsArea);
+                setInterval(displayComments, 10000);
+        });
 
     }
+
+     /**
+    This function is called when the submit button is clicked. Sends in input to
+    the service
+    **/
+    function submitComment() {
+        let comName = document.getElementById("comName").value;
+        let comment = document.getElementById("comment").value;
+        let id = document.getElementById("charID").innerHTML;
+
+        if ((comName != "") && (comment != "")) {
+            const message = {comName: comName,
+                             comment: comment,
+                             id: id};
+            const fetchOptions = {
+                method : 'POST',
+                headers : {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body : JSON.stringify(message)
+            };
+            let url = "http://localhost:3000";
+            fetch(url, fetchOptions)
+                .then(checkStatus)
+                .then(function(responseText) {
+                    console.log(responseText);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                }); 
+        }
+        document.getElementById("comName").value = "";
+        document.getElementById("comment").value = "";  
+    }
+
+    /**
+    Fetches and displays user comment from service with the users name followed by 
+    their comment in its own div box.
+    **/
+    function displayComments() {
+        let id = document.getElementById("charID").innerHTML;
+        console.log(id);
+        let commentsArea = document.getElementById("commentsArea");
+        commentsArea.innerHTML = "";
+
+        let url = "http://localhost:3000/?mode=comments&id=" + id;
+
+        fetch(url)
+            .then(checkStatus)
+            .then(function(responseText) {
+                let json = JSON.parse(responseText);
+                console.log(json);
+                for (let i=0; i < json.comments.length; i++) {
+                    let comment = json.comments[i];
+                    let div = document.createElement("div");
+                    let h6 = document.createElement("h6");
+                    let p = document.createElement("p");
+                    h6.innerHTML = comment.name;
+                    p.innerHTML = comment.comment;
+                    div.appendChild(h6);
+                    div.appendChild(p);
+                    div.style.border = "2px solid white";
+                    div.style.overflow = "auto";
+                    div.style.margin = "7px";
+                    h6.style.fontSize = "18px";
+                    p.style.fontSize = "18px";
+                    h6.style.margin = "4px";
+                    p.style.margin = "4px";
+                    commentsArea.appendChild(div);
+                }            
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+
+
     function myChart(json, value) {
 
         // let charity = "Mount Desert Island Biological Laboratory"
@@ -349,8 +573,8 @@
                     ],
                     //backgroundColor:'green',
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)'
+                        'rgba(0, 57, 142, 0.6)',
+                        'rgba(154, 211, 240, 0.6)'
 
                     ],
                     borderWidth: 1,
@@ -406,6 +630,124 @@
         });
 
     }
+/**
+                let intro = document.createElement("h5");
+                intro.innerHTML = "Leave a Comment: ";
+                intro.style.margin = "5px";
+                intro.style.fontSize = "25px";
+                intro.style.textDecoration = "underline";
+                intro.style.marginLeft = "0px";
+                intro.style.marginTop = "10px";
+                body.appendChild(intro);
+
+                let comName = document.createElement("input");
+                comName.setAttribute("id", "comName");
+                let comment = document.createElement("textarea");
+                comment.setAttribute("id", "comment");
+                body.appendChild(comName);
+                body.appendChild(comment);
+                let yourName = document.getElementById("comName");
+                yourName.placeholder = "Your Name Here";
+                yourName.style.marginBottom = "2px";
+                yourName.style.marginLeft = "0px";
+                yourName.style.width = "150px";
+                let yourComment = document.getElementById("comment");
+                yourComment.placeholder = "Your Comment Here";
+                yourComment.style.marginBottom = "2px";
+                yourComment.style.marginLeft = "0px";
+                yourComment.style.width = "300px";
+                yourComment.style.height = "150px";
+                yourComment.style.position = "abosolute";
+
+                let submit = document.createElement("button");
+                submit.setAttribute("id" , "submitComment");
+                submit.addEventListener("click", submitComment);
+                body.appendChild(submit);
+                let subComment = document.getElementById("submitComment");
+                subComment.innerHTML = "Submit";
+                subComment.style.width = "100px";
+                subComment.style.marginLeft = "205px";
+                subComment.style.marginBottom = "10px";
+
+                let commentsArea = document.createElement("div");
+                commentsArea.setAttribute("id", "commentsArea");
+                body.appendChild(commentsArea);
+                setInterval(displayComments, 10000);
+        
+            });
+    }
+
+    function submitComment() {
+        let name = document.getElementById("name").value;
+        let comment = document.getElementById("comment").value;
+        let id = document.getElementById("breweryID").innerHTML;
+
+        if ((name != "") && (comment != "")) {
+            const message = {name: name,
+                             comment: comment,
+                             id: id};
+            const fetchOptions = {
+                method : 'POST',
+                headers : {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body : JSON.stringify(message)
+            };
+            let url = "http://localhost:3000";
+            fetch(url, fetchOptions)
+                .then(checkStatus)
+                .then(function(responseText) {
+                    console.log(responseText);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                }); 
+        }
+        document.getElementById("name").value = "";
+        document.getElementById("comment").value = "";  
+    }
+**/
+    /**
+    Fetches and displays user comment from service with the users name followed by 
+    their comment in its own div box.
+    **/
+    /**
+    function displayComments() {
+        let id = document.getElementById("breweryID").innerHTML;
+        let commentsArea = document.getElementById("commentsArea");
+        commentsArea.innerHTML = "";
+
+        let url = "http://localhost:3000/?mode=comments&id=" + id;
+
+        fetch(url)
+            .then(checkStatus)
+            .then(function(responseText) {
+                let json = JSON.parse(responseText);
+                console.log(json);
+                for (let i=0; i < json.comments.length; i++) {
+                    let comment = json.comments[i];
+                    let div = document.createElement("div");
+                    let h6 = document.createElement("h6");
+                    let p = document.createElement("p");
+                    h6.innerHTML = comment.name;
+                    p.innerHTML = comment.comment;
+                    div.appendChild(h6);
+                    div.appendChild(p);
+                    div.style.border = "2px solid white";
+                    div.style.overflow = "auto";
+                    div.style.margin = "7px";
+                    h6.style.fontSize = "18px";
+                    p.style.fontSize = "18px";
+                    h6.style.margin = "4px";
+                    p.style.margin = "4px";
+                    commentsArea.appendChild(div);
+                }            
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }**/
 
 
     function checkStatus(response) {
